@@ -1,0 +1,5 @@
+node_modules/
+registry_address.txt
+*.log
+.DS_Store
+.env

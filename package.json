@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@a2a-js/sdk": "^0.3.6",
+    "cors": "^2.8.5",
+    "did-jwt-vc": "^4.0.16",
+    "did-resolver": "^4.1.0",
+    "ethers": "^5.8.0",
+    "ethr-did": "^3.0.38",
+    "ethr-did-registry": "^0.0.3",
+    "ethr-did-resolver": "^11.0.5",
+    "express": "^5.2.1",
+    "ganache": "^7.9.2",
+    "node-fetch": "^2.7.0"
+  }
+}

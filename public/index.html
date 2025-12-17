@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2A DID 인증 시스템</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .panel h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ddd;
+            transition: all 0.3s;
+        }
+
+        .step.active {
+            border-left-color: #667eea;
+            background: #e8eaf6;
+        }
+
+        .step.success {
+            border-left-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .step.error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .step-content {
+            color: #666;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box strong {
+            color: #1976d2;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #ddd;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #ddd;
+        }
+
+        .timeline-item.active::before {
+            background: #667eea;
+            box-shadow: 0 0 0 2px #667eea;
+        }
+
+        .timeline-item.success::before {
+            background: #4caf50;
+            box-shadow: 0 0 0 2px #4caf50;
+        }
+
+        .json-display {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge.processing {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 A2A DID 인증 시스템</h1>
+
+        <div class="panel">
+            <h2>📋 인증 프로세스</h2>
+            <button id="startBtn" onclick="startAuthentication()">
+                🚀 DID 인증 시작
+            </button>
+        </div>
+
+        <div class="grid">
+            <div class="panel">
+                <h2>🔑 Client Agent</h2>
+                <div class="timeline" id="clientTimeline">
+                    <div class="timeline-item" id="step1">
+                        <div class="step-title">1. DID 생성 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="step1-content">클릭하여 시작하세요</div>
+                    </div>
+                    <div class="timeline-item" id="step2">
+                        <div class="step-title">2. Agent Card 요청 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="step2-content"></div>
+                    </div>
+                    <div class="timeline-item" id="step2b">
+                        <div class="step-title">3. Server VP 검증 ✓ <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="step2b-content"></div>
+                    </div>
+                    <div class="timeline-item" id="step3">
+                        <div class="step-title">4. Issuer에게 VC 요청 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="step3-content"></div>
+                    </div>
+                    <div class="timeline-item" id="step4">
+                        <div class="step-title">5. VP 생성 및 서명 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="step4-content"></div>
+                    </div>
+                    <div class="timeline-item" id="step5">
+                        <div class="step-title">6. 서버에 VP 전송 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="step5-content"></div>
+                    </div>
+                    <div class="timeline-item" id="step6">
+                        <div class="step-title">7. Authorization Token 수신 🎫 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="step6-content"></div>
+                    </div>
+                    <div class="timeline-item" id="step7">
+                        <div class="step-title">8. Client AI → Server AI Task 요청 🤖 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="step7-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>🛡️ Server Agent</h2>
+                <div class="timeline" id="serverTimeline">
+                    <div class="timeline-item" id="server1">
+                        <div class="step-title">1. Server VP 제공 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="server1-content"></div>
+                    </div>
+                    <div class="timeline-item" id="server2">
+                        <div class="step-title">2. Client VP 수신 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="server2-content"></div>
+                    </div>
+                    <div class="timeline-item" id="server3">
+                        <div class="step-title">3. VP 서명 검증 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="server3-content"></div>
+                    </div>
+                    <div class="timeline-item" id="server4">
+                        <div class="step-title">4. DID 문서 조회 (블록체인) <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="server4-content"></div>
+                    </div>
+                    <div class="timeline-item" id="server5">
+                        <div class="step-title">5. Revocation Status 확인 🔍 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="server5-content"></div>
+                    </div>
+                    <div class="timeline-item" id="server6">
+                        <div class="step-title">6. Policy Compliance 검증 📋 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="server6-content"></div>
+                    </div>
+                    <div class="timeline-item" id="server7">
+                        <div class="step-title">7. 권한 부여 (Authorize) 🔐 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="server7-content"></div>
+                    </div>
+                    <div class="timeline-item" id="server8">
+                        <div class="step-title">8. Authorization Token 발급 🎫 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="server8-content"></div>
+                    </div>
+                    <div class="timeline-item" id="server9">
+                        <div class="step-title">9. Server AI Task 처리 🤖 <span class="badge pending">대기중</span></div>
+                        <div class="step-content" id="server9-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>📊 인증 결과</h2>
+            <div id="result" class="info-box" style="display: none;">
+                <strong>인증 결과:</strong>
+                <div id="resultContent"></div>
+            </div>
+        </div>
+
+        <div class="panel" id="aiResult" style="display: none;">
+            <h2>🤖 AI Agent Task 결과</h2>
+            <div id="aiResultContent" class="info-box" style="border-left-color: #9c27b0; background: #f3e5f5;">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="client-auth.js"></script>
+</body>
+</html>
