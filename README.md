@@ -4,12 +4,12 @@
 
 ## 주요 기능
 
-- ✅ **양방향 DID 인증**: Client와 Server가 서로를 검증
-- ✅ **블록체인 기반**: Ethereum 블록체인에 DID 등록
-- ✅ **VC/VP 표준**: W3C Verifiable Credentials 표준 준수
-- ✅ **정책 기반 권한 관리**: PolicyValidator를 통한 세밀한 권한 제어
-- ✅ **AI Agent 통합**: 인증 후 AI 작업 수행
-- ✅ **웹 UI**: 실시간 인증 과정 시각화
+-  **양방향 DID 인증**: Client와 Server가 서로를 검증
+-  **블록체인 기반 DID 생성**: Ethereum 블록체인에 DID 등록
+-  **VC/VP 표준**: W3C Verifiable Credentials 표준 준수
+-  **정책 기반 권한 관리**: PolicyValidator를 통한 세밀한 권한 제어
+-  **AI Agent 통합**: 인증 후 AI 작업 수행
+-  **웹 UI**: 실시간 인증 과정 시각화
 
 ## 시스템 구조
 
